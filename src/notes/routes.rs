@@ -14,6 +14,10 @@ pub async fn handle_all_notes(client: web::Data<Client>) -> impl Responder {
 #[put("/create")]
 pub async fn handle_create_note(client: web::Data<Client>, req_body: String) -> impl Responder {
     let result = serde_json::from_str::<Note>(&req_body);
+    if result.is_err() {
+        return HttpResponse::BadRequest().body("Bad Request")
+    }
+
     let note = result.unwrap();
 
     let collection: Collection<Note> = client.database("notes").collection("notes");
